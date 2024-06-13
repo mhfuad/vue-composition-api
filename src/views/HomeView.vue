@@ -1,10 +1,13 @@
 <template>
   <div class="home">
     <h2>{{ appTitle }}</h2>
-    <h3>{{ counterData.title }}</h3>
-    <button @click="decreaseCounter" class="btn">-</button>
-    <span class="counter">{{ count }}</span>
-    <button @click="increaseCounter" class="btn">+</button>
+    <div>
+      <h3>{{ counterData.title }}</h3>
+      <button @click="decreaseCounter" class="btn">-</button>
+      <span class="counter">{{ counterData.count }}</span>
+      <button @click="increaseCounter" class="btn">+</button>
+    </div>
+    <p>This number is {{oddOrEven}}</p>
     <div>
       <h4>Edit counter title:</h4>
       <input v-model="counterData.title" type="text">
@@ -13,24 +16,64 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue'
+import { reactive, 
+  ref, 
+  computed, 
+  watch, 
+  onBeforeMount, 
+  onMounted, 
+  onBeforeUnmount, 
+  onUnmounted, 
+  onActivated,
+  onDeactivated} from 'vue'
 
 const appTitle = "My Counter App";
 
-const count = ref(0)
+//const count = ref(0)
 
 const counterData = reactive({
   count: 0,
   title: 'Hello World!'
 })
 
+watch(()=>counterData.count, (newValue)=>{
+  if(newValue == 20){
+    alert('Count is 20')
+  }
+})
+
+const oddOrEven = computed(() => counterData.count % 2 === 0 ? 'even' : 'odd')
+
 const increaseCounter = ()=>{
-  count.value++
+  counterData.count++
 }
 
 const decreaseCounter = ()=>{
-  count.value--
+  counterData.count--
 }
+
+onBeforeMount(()=>{
+  console.log("Before Mount")
+})
+
+onMounted(()=>{
+  console.log("Mounted")
+})
+
+onBeforeUnmount(()=>{
+  console.log("Before Unmount")
+})
+onUnmounted(()=>{
+  console.log("Unmounted") 
+})
+
+onActivated(()=>{
+  console.log("Activated")
+})
+
+onDeactivated(()=>{
+  console.log("Deactivated")
+})
 </script>
 
 <!--
