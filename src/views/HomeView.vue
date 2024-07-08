@@ -1,21 +1,26 @@
 <template>
   <div class="home">
-    <h2>{{ appTitle }}</h2>
+    <h2 ref="appTitleRef">{{ appTitle }}</h2>
     <div>
       <h3>{{ counterData.title }}</h3>
-      <button @click="decreaseCounter" class="btn">-</button>
+      <button @click="decreaseCounter(2)" class="btn">--</button>
+      <button @click="decreaseCounter(1)" class="btn">-</button>
       <span class="counter">{{ counterData.count }}</span>
-      <button @click="increaseCounter" class="btn">+</button>
+      <button @click="increaseCounter(1)" class="btn">+</button>
+      <button @click="increaseCounter(2)" class="btn">++</button>
     </div>
     <p>This number is {{oddOrEven}}</p>
     <div>
       <h4>Edit counter title:</h4>
-      <input v-model="counterData.title" type="text">
+      <input v-model="counterData.title" type="text" v-autofocus="true">
     </div>
   </div>
 </template>
 
 <script setup>
+/*
+  imports
+*/
 import { reactive, 
   ref, 
   computed, 
@@ -25,10 +30,27 @@ import { reactive,
   onBeforeUnmount, 
   onUnmounted, 
   onActivated,
-  onDeactivated} from 'vue'
+  onDeactivated,
+  onBeforeUpdate,
+  onUpdated,
+  nextTick
+} from 'vue'
 
+import { vAutofocus } from '@/directives/vAutofocus';
+
+/*
+  app title
+*/
 const appTitle = "My Counter App";
+const appTitleRef = ref(null);
 
+onMounted(()=>{
+  console.log("Mounted")
+  console.log(`The app title is: ${appTitleRef.value.offsetWidth} px width`)
+})
+/*
+  counter
+*/
 //const count = ref(0)
 
 const counterData = reactive({
@@ -44,21 +66,21 @@ watch(()=>counterData.count, (newValue)=>{
 
 const oddOrEven = computed(() => counterData.count % 2 === 0 ? 'even' : 'odd')
 
-const increaseCounter = ()=>{
-  counterData.count++
+const increaseCounter = async (amount)=>{
+  counterData.count+= amount
+  await nextTick()
+  console.log("do something when counter has updated in the dom.")
 }
 
-const decreaseCounter = ()=>{
-  counterData.count--
+const decreaseCounter = amount=>{
+  counterData.count-= amount
 }
 
 onBeforeMount(()=>{
   console.log("Before Mount")
 })
 
-onMounted(()=>{
-  console.log("Mounted")
-})
+
 
 onBeforeUnmount(()=>{
   console.log("Before Unmount")
@@ -73,6 +95,14 @@ onActivated(()=>{
 
 onDeactivated(()=>{
   console.log("Deactivated")
+})
+
+onBeforeUpdate(()=>{
+  console.log("Before Update")
+})
+
+onUpdated(()=>{
+  console.log("Updated")
 })
 </script>
 
